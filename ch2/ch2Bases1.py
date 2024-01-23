@@ -1,5 +1,6 @@
 from sympy import *
 
+#this script computes the Vm terms
 h=symbols("h",cls=Symbol,real=True)
 
 tau=symbols("tau",cls=Symbol)
