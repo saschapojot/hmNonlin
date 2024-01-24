@@ -23,12 +23,13 @@ VFuncsAll=[V0Func]#variable is tau
 RFuncsAll=[0]#variable is tau
 VValsAll=[V0Val]
 tSymbolStart=datetime.now()
-mEnd=10
+mEnd=4
 for m in range(1,mEnd+1):
     RmFunc=diff(VFuncsAll[m-1],tau)
     for j in range(0,m):
         RmFunc+=VFuncsAll[j]*VFuncsAll[m-1-j]
     RmFunc-=(1-chi(m))
+    RmFunc=apart(RmFunc,t)
     RFuncsAll.append(RmFunc)
     Vm=chi(m)*VValsAll[m-1]+h*integrate(RmFunc,(tau,0,t))
     VValsAll.append(Vm)
@@ -60,7 +61,7 @@ V=lambdify([t,h],VTruncated,"numpy")
 hValsAll=[-1,-1/2,-1/10]
 colors=["black","lightcoral","forestgreen","darkslategrey","navy"]
 
-tValsAll=np.linspace(0,1.5,100)
+tValsAll=np.linspace(0,10,100)
 plt.figure()
 
 for i in range(0,len(hValsAll)):
