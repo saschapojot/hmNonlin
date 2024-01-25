@@ -65,7 +65,7 @@ plt.figure()
 plt.plot(hValsAll,V02,color="blue",label="$V^{(2)}(0)$")
 plt.plot(hValsAll,V03,color="red",label="$V^{(3)}(0)$")
 plt.legend(loc="best")
-plt.title("h curve")
+plt.title("h curve, order "+str(m))
 plt.savefig("ch2bases2hcurve.png")
 
 
