@@ -2,7 +2,7 @@ import numpy as np
 from sympy import *
 from datetime import datetime
 import matplotlib.pyplot as plt
-from findiff import FinDiff
+# from findiff import FinDiff
 #this script computes the Vm terms for bases 1/(1+t)^{m}
 
 h=symbols("h",cls=Symbol,real=True)
@@ -23,7 +23,7 @@ VFuncsAll=[V0Func]#variable is tau
 RFuncsAll=[0]#variable is tau
 VValsAll=[V0Val]
 tSymbolStart=datetime.now()
-mEnd=4
+mEnd=40
 for m in range(1,mEnd+1):
     tStart=datetime.now()
     RmFunc=diff(VFuncsAll[m-1],tau)
