@@ -1,6 +1,6 @@
 from sympy import *
 
-k=3
+k=2
 
 lmdStr="lambda0"
 for i in range(1,k):
