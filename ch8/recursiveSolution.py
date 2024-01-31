@@ -8,13 +8,13 @@ n=1
 x,eps,h,C1=symbols("x,epsilon,h,C1",cls=Symbol)
 
 u0=sqrt(2)*sin(n*pi*x)
-u1=C1*sin(n*pi*x)+h*eps*sqrt(2)/16*sin(3*n*pi*x)/(n**2*pi**2)
+# u1=h*eps*sqrt(2)/16*sin(3*n*pi*x)/(n**2*pi**2)
 
 lmd0=n**2*pi**2-3*eps/2
 
 lmdUnknown=symbols("lambda",cls=Symbol)
-uAll=[u0,u1]
-lmdAll=[lmd0,lmdUnknown]
+uAll=[u0]
+lmdAll=[lmdUnknown]
 
 def R(k,uAll,lmdAll):
     """
@@ -25,8 +25,12 @@ def R(k,uAll,lmdAll):
     :return: R
     """
     ret=diff(uAll[k-1],(x,2))
+    # pprint(ret)
 
+    # print("k="+str(k))
     for m in range(0,k):
+        # pprint("lmdAll[m]="+str(lmdAll[m]))
+        # pprint("uAll[k-1-m]="+str(uAll[k-1-m]))
         ret+=lmdAll[m]*uAll[k-1-m]
 
 
@@ -41,9 +45,9 @@ def R(k,uAll,lmdAll):
     ret+=dbSum
 
     ret1=TR8(ret.expand())
-    return ret1
+    return expand(ret1)
 
-RAll=[0,TR8(R(1,[u0],[lmd0]).expand())]
+RAll=[0]
 
 def extractCoefs(R):
     """
@@ -79,9 +83,10 @@ def solveRHS(retPairs):
     :return:
     """
     pair0=retPairs[0]
-    lmdNext=solve(pair0[1],lmdUnknown)
+    # pprint(pair0)
+    lmdNext=solve(pair0[1],lmdUnknown)[0]
     # pprint(retPairs)
-    pprint(lmdNext)
+    # pprint(lmdNext)
     LInvRCoefs=[]
     for k in range(1,len(retPairs)):
         cTmp=retPairs[k][1]
@@ -89,9 +94,80 @@ def solveRHS(retPairs):
         LInvRCoefs.append([k,newCTmp])
     return lmdNext,LInvRCoefs
 
-R1=RAll[1]
-coefs=extractCoefs(R1)
-lmdNext,LInvRCoefs=solveRHS(coefs)
+# R1=R(1,uAll, lmdAll)
+# coefPairs=extractCoefs(R1)
+#
+# lmdNext,LInvRCoefs=solveRHS(coefPairs)
+# # pprint(lmdNext)
+# pprint(coefPairs)
 
-pprint(lmdNext)
-pprint(LInvRCoefs)
+
+
+
+#init u1
+k=1
+R1=R(k,uAll,lmdAll)
+RAll.append(R1)
+
+RSum1=sum(RAll)
+coefPairs1=extractCoefs(RSum1)
+
+lmd0,LInvRCoefs1=solveRHS(coefPairs1)
+u1=0
+for item in LInvRCoefs1:
+    k,coefTmp=item
+    u1+=coefTmp*sin((2*k+1)*n*pi*x)
+
+u1+=C1*sin(n*pi*x)
+
+uAll.append(u1)
+
+lmdAll.insert(-1,lmd0)
+# pprint(lmd0)
+
+
+
+# # #interation
+M=1
+for j in range(2,M+1):
+    RNew = R(j, uAll, lmdAll)
+    RAll.append(RNew)
+    RSum = sum(RAll)
+    coefPairs = extractCoefs(RSum)
+    lmdNext, LInvRCoefs = solveRHS(coefPairs)
+    uNext = 0
+    for item in LInvRCoefs:
+        k, coefTmp = item
+        # pprint(k)
+        # pprint(coefTmp)
+        uNext += coefTmp * sin((2 * k + 1) * n * pi * x)
+    uAll.append(uNext)
+
+    lmdAll.insert(-1, lmdNext)
+
+
+# lmdTruncated=sum(lmdAll)
+pprint(uAll[0])
+uSumTrucated=sum(uAll)
+
+coefPairsTruncated=extractCoefs(uSumTrucated)
+pprint(uAll[0]+uAll[1])
+# eqn=0
+# for item in coefPairsTruncated:
+#     _,coefTmp=item
+#     eqn+=coefTmp**2/2
+#
+# eqn=eqn.expand()
+# # pprint(eqn)
+#
+#
+# hVal=-1
+# epsVal=-5
+#
+# val=eqn.subs([(eps,epsVal),(h,hVal)])
+#
+# p=Poly(val,C1)
+#
+# C1Roots=np.roots( p.all_coeffs())
+#
+# print(C1Roots)
